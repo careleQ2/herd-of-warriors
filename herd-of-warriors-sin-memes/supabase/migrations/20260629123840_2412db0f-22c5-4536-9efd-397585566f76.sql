@@ -1,0 +1,1 @@
+ALTER TABLE public.fighters ADD COLUMN IF NOT EXISTS trayectoria jsonb NOT NULL DEFAULT '[]'::jsonb;

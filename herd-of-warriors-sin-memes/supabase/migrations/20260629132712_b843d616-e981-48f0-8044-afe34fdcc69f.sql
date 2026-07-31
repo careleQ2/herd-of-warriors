@@ -1,0 +1,1 @@
+ALTER TABLE public.fighters ADD COLUMN IF NOT EXISTS organizaciones_historial text[] NOT NULL DEFAULT '{}'::text[];

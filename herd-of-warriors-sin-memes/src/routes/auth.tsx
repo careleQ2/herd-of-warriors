@@ -14,7 +14,7 @@ export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Acceso — Herd of Warriors" },
+      { title: "Acceso — Herd of Warriors1" },
       { name: "description", content: "Crea tu cuenta o inicia sesión." },
     ],
   }),

@@ -5,6 +5,7 @@ import { AuthGate } from "@/components/AuthGate";
 import { BottomNav } from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/auth";
+import { getFighterImageUrl } from "@/lib/fighter-images";
 
 type Fighter = {
   id: string;
@@ -135,9 +136,11 @@ function FighterProfile() {
   return (
     <div className="min-h-screen bg-background pb-28 text-foreground">
       <div className="relative h-80 w-full overflow-hidden bg-surface">
-        {fighter.foto_url && (
-          <img src={fighter.foto_url} alt={fighter.nombre} className="h-full w-full object-cover" />
-        )}
+        <img
+          src={getFighterImageUrl(fighter.nombre)}
+          alt={fighter.nombre}
+          className="h-full w-full object-cover"
+        />
         <div
           className="absolute inset-0"
           style={{ background: "linear-gradient(to top, #0A0A0A 5%, transparent 60%)" }}

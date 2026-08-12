@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/auth";
 import { useLanguage } from "@/lib/i18n";
+import { getFighterImageUrl } from "@/lib/fighter-images";
 
 function VikingHelmet({ className }: { className?: string }) {
   return (
@@ -198,9 +199,11 @@ function FighterFeedCard({
     <li className="overflow-hidden rounded-xl border border-border bg-surface">
       <Link to="/peleadores/$id" params={{ id: fighter.id }} className="block">
         <div className="relative h-48 w-full bg-background">
-          {fighter.foto_url && (
-            <img src={fighter.foto_url} alt={fighter.nombre} className="h-full w-full object-cover" />
-          )}
+          <img
+            src={getFighterImageUrl(fighter.nombre)}
+            alt={fighter.nombre}
+            className="h-full w-full object-cover"
+          />
           <div
             className="absolute inset-0"
             style={{

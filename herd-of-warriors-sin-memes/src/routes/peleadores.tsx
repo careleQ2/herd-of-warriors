@@ -6,6 +6,7 @@ import { AuthGate } from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/auth";
 import { useLanguage } from "@/lib/i18n";
+import { getFighterImageUrl } from "@/lib/fighter-images";
 import {
   Drawer,
   DrawerContent,
@@ -303,6 +304,7 @@ function Peleadores() {
           <ul className="space-y-2">
             {shown.map((f) => {
               const isFollowing = followed.has(f.id);
+              const photoUrl = getFighterImageUrl(f.nombre);
               return (
                 <li
                   key={f.id}
@@ -310,13 +312,11 @@ function Peleadores() {
                 >
                   <div className="flex gap-3">
                     <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-background">
-                      {f.foto_url && (
-                        <img
-                          src={f.foto_url}
-                          alt={f.nombre}
-                          className="h-full w-full object-cover"
-                        />
-                      )}
+                      <img
+                        src={photoUrl}
+                        alt={f.nombre}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-display truncate text-base font-bold uppercase tracking-wide">
@@ -471,13 +471,11 @@ function FighterDrawer({
 
             <div className="mt-2 flex items-center gap-3">
               <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-background">
-                {state.fighter.foto_url && (
-                  <img
-                    src={state.fighter.foto_url}
-                    alt={state.fighter.nombre}
-                    className="h-full w-full object-cover"
-                  />
-                )}
+                <img
+                  src={getFighterImageUrl(state.fighter.nombre)}
+                  alt={state.fighter.nombre}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="min-w-0">
                 <h2 className="text-display truncate text-lg font-bold uppercase tracking-wide">

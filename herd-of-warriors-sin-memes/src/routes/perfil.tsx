@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/auth";
 import { useLanguage } from "@/lib/i18n";
 import { DISCIPLINES, type DisciplineId } from "@/lib/preferences";
+import { getFighterImageUrl } from "@/lib/fighter-images";
 
 type Fighter = { id: string; nombre: string; apodo: string | null; foto_url: string | null };
 type Org = { id: string; nombre: string; abreviatura: string | null };
@@ -103,9 +104,7 @@ function Perfil() {
                     className="block overflow-hidden rounded-lg border border-border bg-surface"
                   >
                     <div className="aspect-square w-full bg-background">
-                      {f.foto_url && (
-                        <img src={f.foto_url} alt={f.nombre} className="h-full w-full object-cover" />
-                      )}
+                      <img src={getFighterImageUrl(f.nombre)} alt={f.nombre} className="h-full w-full object-cover" />
                     </div>
                     <p className="truncate p-1.5 text-[10px] font-semibold uppercase tracking-wide">
                       {f.apodo || f.nombre}

@@ -3,12 +3,12 @@ import { AppShell } from "@/components/AppShell";
 import { AuthGate } from "@/components/AuthGate";
 import { FightersPage } from "./peleadores.index";
 
-export const Route = createFileRoute("/favoritos")({
-  head: () => ({ meta: [{ title: "Favoritos — Herd of Warriors" }] }),
+export const Route = createFileRoute("/siguiendo")({
+  head: () => ({ meta: [{ title: "Siguiendo — Herd of Warriors" }] }),
   component: () => (
     <AuthGate>
-      <AppShell title="FAVORITOS">
-        <FightersPage favoritesOnly title="FAVORITOS" />
+      <AppShell title="SIGUIENDO">
+        <FightersPage favoritesOnly title="SIGUIENDO" />
       </AppShell>
     </AuthGate>
   ),

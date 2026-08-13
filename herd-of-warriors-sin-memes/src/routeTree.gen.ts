@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SiguiendoRouteImport } from './routes/siguiendo'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as PeleadoresRouteImport } from './routes/peleadores'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -19,11 +20,17 @@ import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AjustesRouteImport } from './routes/ajustes'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PeleadoresIndexRouteImport } from './routes/peleadores.index'
 import { Route as EventosIndexRouteImport } from './routes/eventos.index'
 import { Route as PeleadoresIdRouteImport } from './routes/peleadores.$id'
 import { Route as EventosIdRouteImport } from './routes/eventos.$id'
 import { Route as AdminFightersRouteImport } from './routes/admin.fighters'
 
+const SiguiendoRoute = SiguiendoRouteImport.update({
+  id: '/siguiendo',
+  path: '/siguiendo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -74,6 +81,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PeleadoresIndexRoute = PeleadoresIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PeleadoresRoute,
+} as any)
 const EventosIndexRoute = EventosIndexRouteImport.update({
   id: '/eventos/',
   path: '/eventos/',
@@ -106,10 +118,12 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/peleadores': typeof PeleadoresRouteWithChildren
   '/perfil': typeof PerfilRoute
+  '/siguiendo': typeof SiguiendoRoute
   '/admin/fighters': typeof AdminFightersRoute
   '/eventos/$id': typeof EventosIdRoute
   '/peleadores/$id': typeof PeleadoresIdRoute
   '/eventos/': typeof EventosIndexRoute
+  '/peleadores/': typeof PeleadoresIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -120,12 +134,13 @@ export interface FileRoutesByTo {
   '/gimnasios': typeof GimnasiosRoute
   '/noticias': typeof NoticiasRoute
   '/onboarding': typeof OnboardingRoute
-  '/peleadores': typeof PeleadoresRouteWithChildren
   '/perfil': typeof PerfilRoute
+  '/siguiendo': typeof SiguiendoRoute
   '/admin/fighters': typeof AdminFightersRoute
   '/eventos/$id': typeof EventosIdRoute
   '/peleadores/$id': typeof PeleadoresIdRoute
   '/eventos': typeof EventosIndexRoute
+  '/peleadores': typeof PeleadoresIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,10 +154,12 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/peleadores': typeof PeleadoresRouteWithChildren
   '/perfil': typeof PerfilRoute
+  '/siguiendo': typeof SiguiendoRoute
   '/admin/fighters': typeof AdminFightersRoute
   '/eventos/$id': typeof EventosIdRoute
   '/peleadores/$id': typeof PeleadoresIdRoute
   '/eventos/': typeof EventosIndexRoute
+  '/peleadores/': typeof PeleadoresIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,10 +174,12 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/peleadores'
     | '/perfil'
+    | '/siguiendo'
     | '/admin/fighters'
     | '/eventos/$id'
     | '/peleadores/$id'
     | '/eventos/'
+    | '/peleadores/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -171,12 +190,13 @@ export interface FileRouteTypes {
     | '/gimnasios'
     | '/noticias'
     | '/onboarding'
-    | '/peleadores'
     | '/perfil'
+    | '/siguiendo'
     | '/admin/fighters'
     | '/eventos/$id'
     | '/peleadores/$id'
     | '/eventos'
+    | '/peleadores'
   id:
     | '__root__'
     | '/'
@@ -189,10 +209,12 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/peleadores'
     | '/perfil'
+    | '/siguiendo'
     | '/admin/fighters'
     | '/eventos/$id'
     | '/peleadores/$id'
     | '/eventos/'
+    | '/peleadores/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -206,6 +228,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PeleadoresRoute: typeof PeleadoresRouteWithChildren
   PerfilRoute: typeof PerfilRoute
+  SiguiendoRoute: typeof SiguiendoRoute
   AdminFightersRoute: typeof AdminFightersRoute
   EventosIdRoute: typeof EventosIdRoute
   EventosIndexRoute: typeof EventosIndexRoute
@@ -213,6 +236,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/siguiendo': {
+      id: '/siguiendo'
+      path: '/siguiendo'
+      fullPath: '/siguiendo'
+      preLoaderRoute: typeof SiguiendoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/perfil': {
       id: '/perfil'
       path: '/perfil'
@@ -283,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/peleadores/': {
+      id: '/peleadores/'
+      path: '/'
+      fullPath: '/peleadores/'
+      preLoaderRoute: typeof PeleadoresIndexRouteImport
+      parentRoute: typeof PeleadoresRoute
+    }
     '/eventos/': {
       id: '/eventos/'
       path: '/eventos'
@@ -316,10 +353,12 @@ declare module '@tanstack/react-router' {
 
 interface PeleadoresRouteChildren {
   PeleadoresIdRoute: typeof PeleadoresIdRoute
+  PeleadoresIndexRoute: typeof PeleadoresIndexRoute
 }
 
 const PeleadoresRouteChildren: PeleadoresRouteChildren = {
   PeleadoresIdRoute: PeleadoresIdRoute,
+  PeleadoresIndexRoute: PeleadoresIndexRoute,
 }
 
 const PeleadoresRouteWithChildren = PeleadoresRoute._addFileChildren(
@@ -337,6 +376,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PeleadoresRoute: PeleadoresRouteWithChildren,
   PerfilRoute: PerfilRoute,
+  SiguiendoRoute: SiguiendoRoute,
   AdminFightersRoute: AdminFightersRoute,
   EventosIdRoute: EventosIdRoute,
   EventosIndexRoute: EventosIndexRoute,

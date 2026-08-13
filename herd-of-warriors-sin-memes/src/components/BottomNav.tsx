@@ -126,7 +126,7 @@ function ColosseumIcon(props: any) {
 
 const items = [
   { to: "/peleadores", label: "FIGHTERS", icon: SpartanHelmet },
-  { to: "/favoritos", label: "SIGUIENDO", icon: ShurikenIcon },
+  { to: "/siguiendo", label: "SIGUIENDO", icon: ShurikenIcon },
   { to: "/eventos", label: "EVENTOS", icon: CrossedSwords },
   { to: "/noticias", label: "NOTICIAS", icon: ScrollIcon },
   { to: "/gimnasios", label: "GIMNASIOS", icon: ColosseumIcon },

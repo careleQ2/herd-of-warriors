@@ -15,6 +15,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as GimnasiosRouteImport } from './routes/gimnasios'
 import { Route as FeedRouteImport } from './routes/feed'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AjustesRouteImport } from './routes/ajustes'
 import { Route as IndexRouteImport } from './routes/index'
@@ -51,6 +52,11 @@ const GimnasiosRoute = GimnasiosRouteImport.update({
 const FeedRoute = FeedRouteImport.update({
   id: '/feed',
   path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ajustes': typeof AjustesRoute
   '/auth': typeof AuthRoute
+  '/favoritos': typeof FavoritosRoute
   '/feed': typeof FeedRoute
   '/gimnasios': typeof GimnasiosRoute
   '/noticias': typeof NoticiasRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ajustes': typeof AjustesRoute
   '/auth': typeof AuthRoute
+  '/favoritos': typeof FavoritosRoute
   '/feed': typeof FeedRoute
   '/gimnasios': typeof GimnasiosRoute
   '/noticias': typeof NoticiasRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/ajustes': typeof AjustesRoute
   '/auth': typeof AuthRoute
+  '/favoritos': typeof FavoritosRoute
   '/feed': typeof FeedRoute
   '/gimnasios': typeof GimnasiosRoute
   '/noticias': typeof NoticiasRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ajustes'
     | '/auth'
+    | '/favoritos'
     | '/feed'
     | '/gimnasios'
     | '/noticias'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ajustes'
     | '/auth'
+    | '/favoritos'
     | '/feed'
     | '/gimnasios'
     | '/noticias'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ajustes'
     | '/auth'
+    | '/favoritos'
     | '/feed'
     | '/gimnasios'
     | '/noticias'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AjustesRoute: typeof AjustesRoute
   AuthRoute: typeof AuthRoute
+  FavoritosRoute: typeof FavoritosRoute
   FeedRoute: typeof FeedRoute
   GimnasiosRoute: typeof GimnasiosRoute
   NoticiasRoute: typeof NoticiasRoute
@@ -240,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/feed'
       fullPath: '/feed'
       preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -310,6 +330,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AjustesRoute: AjustesRoute,
   AuthRoute: AuthRoute,
+  FavoritosRoute: FavoritosRoute,
   FeedRoute: FeedRoute,
   GimnasiosRoute: GimnasiosRoute,
   NoticiasRoute: NoticiasRoute,

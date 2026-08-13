@@ -165,10 +165,10 @@ const DISC_FILTERS = ["MMA", "Boxeo", "Muay Thai", "Kickboxing", "BJJ", "Judo"];
 const PAGE_SIZE = 20;
 
 export const Route = createFileRoute("/peleadores")({
-  head: () => ({ meta: [{ title: "Peleadores — Herd of Warriors" }] }),
+  head: () => ({ meta: [{ title: "Fighters — Herd of Warriors" }] }),
   component: () => (
     <AuthGate>
-      <Peleadores />
+      <FightersPage />
     </AuthGate>
   ),
 });
@@ -178,14 +178,14 @@ type DrawerState =
   | { kind: "trayectoria"; fighter: Fighter }
   | null;
 
-function Peleadores() {
+export function FightersPage({ favoritesOnly = false }: { favoritesOnly?: boolean } = {}) {
   const { user } = useSession();
   const { t } = useLanguage();
   const [fighters, setFighters] = useState<Fighter[]>([]);
   const [followed, setFollowed] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState<string | null>(null);
   const [q, setQ] = useState("");
-  const [disc, setDisc] = useState<string>("all");
+  const [disc, setDisc] = useState<string>(favoritesOnly ? "favoritos" : "all");
   const [org, setOrg] = useState<string>("all");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
@@ -236,16 +236,15 @@ function Peleadores() {
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    
-    // Normalize discipline string: lowercase and replace spaces/hyphens with common format
-    const normalizeDiscipline = (d: string) => 
-      d.toLowerCase().replace(/[\s\-]/g, '');
-    
+
+    const normalizeDiscipline = (d: string) => d.toLowerCase().replace(/[\s\-]/g, "");
+
     return fighters.filter((f) => {
-      if (disc === "favoritos") {
+      if (favoritesOnly || disc === "favoritos") {
         if (!followed.has(f.id)) return false;
-      } else if (disc !== "all") {
-        // Check if fighter has the selected discipline (case-insensitive and space/hyphen insensitive)
+      }
+
+      if (disc !== "all" && disc !== "favoritos") {
         const normalizedFilterDisc = normalizeDiscipline(disc);
         const hasDiscipline = f.disciplinas.some(
           (d) => normalizeDiscipline(d) === normalizedFilterDisc
@@ -253,7 +252,6 @@ function Peleadores() {
         if (!hasDiscipline) return false;
       }
 
-      // Filter by organization
       if (org !== "all" && f.organizacion !== org) {
         return false;
       }
@@ -264,7 +262,7 @@ function Peleadores() {
         (f.apodo ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [fighters, q, disc, org, followed]);
+  }, [fighters, q, disc, org, followed, favoritesOnly]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
@@ -313,12 +311,16 @@ function Peleadores() {
       </div>
 
       <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 pb-1">
-        <Chip active={disc === "all"} onClick={() => setDisc("all")} label={t("fighters.all")} />
-        <Chip
-          active={disc === "favoritos"}
-          onClick={() => setDisc("favoritos")}
-          label={`${t("fighters.favorites")}${followed.size ? ` (${followed.size})` : ""}`}
-        />
+        {!favoritesOnly && (
+          <>
+            <Chip active={disc === "all"} onClick={() => setDisc("all")} label={t("fighters.all")} />
+            <Chip
+              active={disc === "favoritos"}
+              onClick={() => setDisc("favoritos")}
+              label={`${t("fighters.favorites")}${followed.size ? ` (${followed.size})` : ""}`}
+            />
+          </>
+        )}
         {DISC_FILTERS.map((d) => (
           <Chip key={d} active={disc === d} onClick={() => setDisc(d)} label={d} />
         ))}

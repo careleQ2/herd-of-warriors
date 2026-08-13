@@ -184,6 +184,7 @@ function Peleadores() {
   const [busy, setBusy] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [disc, setDisc] = useState<string>("all");
+  const [org, setOrg] = useState<string>("all");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
   const [drawer, setDrawer] = useState<DrawerState>(null);
@@ -220,25 +221,52 @@ function Peleadores() {
       });
   }, [user]);
 
+  // Extract unique organizations from fighters
+  const organizations = useMemo(() => {
+    const orgs = new Set<string>();
+    fighters.forEach((f) => {
+      if (f.organizacion) {
+        orgs.add(f.organizacion);
+      }
+    });
+    return Array.from(orgs).sort();
+  }, [fighters]);
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
+    
+    // Normalize discipline string: lowercase and replace spaces/hyphens with common format
+    const normalizeDiscipline = (d: string) => 
+      d.toLowerCase().replace(/[\s\-]/g, '');
+    
     return fighters.filter((f) => {
       if (disc === "favoritos") {
         if (!followed.has(f.id)) return false;
-      } else if (disc !== "all" && !f.disciplinas.includes(disc)) {
+      } else if (disc !== "all") {
+        // Check if fighter has the selected discipline (case-insensitive and space/hyphen insensitive)
+        const normalizedFilterDisc = normalizeDiscipline(disc);
+        const hasDiscipline = f.disciplinas.some(
+          (d) => normalizeDiscipline(d) === normalizedFilterDisc
+        );
+        if (!hasDiscipline) return false;
+      }
+
+      // Filter by organization
+      if (org !== "all" && f.organizacion !== org) {
         return false;
       }
+
       if (!needle) return true;
       return (
         f.nombre.toLowerCase().includes(needle) ||
         (f.apodo ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [fighters, q, disc, followed]);
+  }, [fighters, q, disc, org, followed]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
-  }, [q, disc]);
+  }, [q, disc, org]);
 
   const shown = filtered.slice(0, visible);
 
@@ -293,6 +321,15 @@ function Peleadores() {
           <Chip key={d} active={disc === d} onClick={() => setDisc(d)} label={d} />
         ))}
       </div>
+
+      {organizations.length > 0 && (
+        <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 pb-1">
+          <Chip active={org === "all"} onClick={() => setOrg("all")} label="Todas las orgs" />
+          {organizations.map((o) => (
+            <Chip key={o} active={org === o} onClick={() => setOrg(o)} label={o} />
+          ))}
+        </div>
+      )}
 
 
       {loading ? (

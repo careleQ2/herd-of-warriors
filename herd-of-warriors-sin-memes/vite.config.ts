@@ -18,4 +18,14 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    build: {
+      // Ensure Vite outputs to dist directory for Capacitor
+      outDir: "dist",
+    },
+    server: {
+      // Enable CORS for development with Capacitor
+      cors: true,
+    },
+  },
 });

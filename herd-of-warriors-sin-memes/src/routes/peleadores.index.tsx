@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Search, Check, X, Shield } from "lucide-react";
+import { Search, X, Shield, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/auth";
 import { useLanguage } from "@/lib/i18n";
@@ -10,20 +10,6 @@ import {
   DrawerContent,
   DrawerClose,
 } from "@/components/ui/drawer";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 function VikingAxe({ className }: { className?: string }) {
   return (
@@ -151,11 +137,12 @@ export function FightersPage({
   const [q, setQ] = useState("");
   const [disc, setDisc] = useState<string>(favoritesOnly ? "favoritos" : "all");
   const [selectedDisciplines, setSelectedDisciplines] = useState<string[]>([]);
-  const [org, setOrg] = useState<string>("all");
+  const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
   const [drawer, setDrawer] = useState<DrawerState>(null);
   const [justFollowed, setJustFollowed] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -198,7 +185,7 @@ export function FightersPage({
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const selectedDisciplineSet = new Set(
-      selectedDisciplines.map((discipline) => normalizeDiscipline(discipline))
+      selectedDisciplines.map((d) => normalizeDiscipline(d))
     );
 
     return fighters.filter((f) => {
@@ -207,13 +194,13 @@ export function FightersPage({
       }
 
       if (selectedDisciplines.length > 0) {
-        const matchesDiscipline = f.disciplinas.some((discipline) =>
-          selectedDisciplineSet.has(normalizeDiscipline(discipline))
+        const matchesDiscipline = f.disciplinas.some(
+          (discipline) => selectedDisciplineSet.has(normalizeDiscipline(discipline))
         );
         if (!matchesDiscipline) return false;
       }
 
-      if (org !== "all" && f.organizacion !== org) {
+      if (selectedOrgs.length > 0 && !selectedOrgs.includes(f.organizacion || "")) {
         return false;
       }
 
@@ -223,11 +210,11 @@ export function FightersPage({
         (f.apodo ?? "").toLowerCase().includes(needle)
       );
     });
-  }, [fighters, q, disc, org, followed, favoritesOnly, selectedDisciplines]);
+  }, [fighters, q, disc, followed, favoritesOnly, selectedDisciplines, selectedOrgs]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
-  }, [q, disc, org, selectedDisciplines]);
+  }, [q, disc, selectedDisciplines, selectedOrgs]);
 
   const shown = filtered.slice(0, visible);
 
@@ -271,56 +258,120 @@ export function FightersPage({
         />
       </div>
 
-      <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex w-full items-center justify-between rounded-lg border border-border bg-surface px-3 py-2.5 text-left text-sm font-medium text-foreground">
-            <span className="truncate">
-              Especialidad: {selectedDisciplines.length > 0 ? selectedDisciplines.join(", ") : "TODOS"}
-            </span>
-            <span className="text-muted-foreground">▾</span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-[260px]">
-            <DropdownMenuItem
-              onSelect={(event) => {
-                event.preventDefault();
-                setSelectedDisciplines([]);
-              }}
-            >
-              TODOS
-            </DropdownMenuItem>
-            {DISC_FILTERS.map((discipline) => (
-              <DropdownMenuCheckboxItem
-                key={discipline}
-                checked={selectedDisciplines.includes(discipline)}
-                onCheckedChange={(checked) => {
-                  setSelectedDisciplines((current) => {
-                    if (checked) {
-                      return current.includes(discipline) ? current : [...current, discipline];
-                    }
-                    return current.filter((item) => item !== discipline);
-                  });
-                }}
-              >
-                {discipline}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="relative mb-3">
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((value) => !value)}
+          className="flex w-full items-center justify-between rounded-lg border border-border bg-surface px-3 py-2.5 text-left text-sm font-medium text-foreground"
+        >
+          <span className="flex items-center gap-2">
+            <Filter className="h-4 w-4" />
+            <span>Filtros</span>
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {selectedDisciplines.length > 0 || selectedOrgs.length > 0 ? "Activo" : "Todos"}
+          </span>
+        </button>
 
-        {organizations.length > 0 && (
-          <Select value={org === "all" ? "all" : org} onValueChange={(value) => setOrg(value)}>
-            <SelectTrigger className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-foreground">
-              <SelectValue placeholder="Organización" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas las orgs</SelectItem>
-              {organizations.map((organization) => (
-                <SelectItem key={organization} value={organization}>
-                  {organization}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        {filtersOpen && (
+          <div
+            className="absolute left-0 right-0 z-20 mt-2 rounded-xl border border-border bg-surface p-3 shadow-lg"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="space-y-3">
+              <div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Especialidad
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDisciplines([])}
+                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                      selectedDisciplines.length === 0
+                        ? "bg-[var(--color-blood)] text-white"
+                        : "border border-border bg-surface text-foreground hover:border-[var(--color-blood)]"
+                    }`}
+                  >
+                    TODAS
+                  </button>
+                  {DISC_FILTERS.map((discipline) => {
+                    const isSelected = selectedDisciplines.includes(discipline);
+                    return (
+                      <button
+                        key={discipline}
+                        type="button"
+                        onClick={() => {
+                          setSelectedDisciplines((current) =>
+                            current.includes(discipline)
+                              ? current.filter((d) => d !== discipline)
+                              : [...current, discipline]
+                          );
+                        }}
+                        className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                          isSelected
+                            ? "bg-[var(--color-blood)] text-white"
+                            : "border border-border bg-surface text-foreground hover:border-[var(--color-blood)]"
+                        }`}
+                      >
+                        {discipline}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="h-px bg-border" />
+
+              <div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Organización
+                </p>
+                {organizations.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOrgs([])}
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                        selectedOrgs.length === 0
+                          ? "bg-[var(--color-blood)] text-white"
+                          : "border border-border bg-surface text-foreground hover:border-[var(--color-blood)]"
+                      }`}
+                    >
+                      TODAS LAS ORGS
+                    </button>
+                    {organizations.map((organization) => {
+                      const isSelected = selectedOrgs.includes(organization);
+                      return (
+                        <button
+                          key={organization}
+                          type="button"
+                          onClick={() => {
+                            setSelectedOrgs((current) =>
+                              current.includes(organization)
+                                ? current.filter((o) => o !== organization)
+                                : [...current, organization]
+                            );
+                          }}
+                          className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                            isSelected
+                              ? "bg-[var(--color-blood)] text-white"
+                              : "border border-border bg-surface text-foreground hover:border-[var(--color-blood)]"
+                          }`}
+                        >
+                          {organization}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="rounded-lg border border-dashed border-border bg-background/40 px-3 py-2 text-sm text-muted-foreground">
+                    Sin organizaciones
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
 

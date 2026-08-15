@@ -80,15 +80,17 @@ function AuthPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin,
+          // Al quitar el redirectTo estricto o dejar que apunte a la raíz de tu dominio actual,
+          // Supabase usará por defecto la Site URL configurada en su panel o la detectará de forma segura.
+          redirectTo: `${window.location.origin}/`,
         },
       });
       if (error) throw error;
-    } catch (err) {
+    }	catch (err) {
       setError(err instanceof Error ? err.message : "Error con Google");
+    } finally {
       setLoading(false);
     }
-    
   };
 
   return (

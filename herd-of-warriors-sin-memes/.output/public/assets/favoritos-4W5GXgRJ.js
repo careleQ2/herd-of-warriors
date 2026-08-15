@@ -1,1 +1,0 @@
-import{d as e}from"./auth-BeteF2gh.js";import{t}from"./AppShell-CjKzPwMO.js";import{n}from"./index-Ij_DRJFP.js";import{t as r}from"./AuthGate-DmTbBZGI.js";var i=e(),a=()=>(0,i.jsx)(r,{children:(0,i.jsx)(t,{title:`FAVORITOS`,children:(0,i.jsx)(n,{favoritesOnly:!0,title:`FAVORITOS`})})});export{a as component};

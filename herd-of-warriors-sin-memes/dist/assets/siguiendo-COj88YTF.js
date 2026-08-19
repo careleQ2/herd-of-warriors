@@ -1,0 +1,1 @@
+import{d as e}from"./auth-pzRteAXJ.js";import{t}from"./AppShell-gs_4nkS3.js";import{n}from"./index-DEfXu0t2.js";import{t as r}from"./AuthGate-0_3Trkdl.js";var i=e(),a=()=>(0,i.jsx)(r,{children:(0,i.jsx)(t,{title:`SIGUIENDO`,children:(0,i.jsx)(n,{favoritesOnly:!0,title:`SIGUIENDO`})})});export{a as component};

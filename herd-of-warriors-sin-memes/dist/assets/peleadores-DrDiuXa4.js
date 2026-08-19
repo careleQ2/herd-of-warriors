@@ -1,0 +1,1 @@
+import{d as e}from"./auth-pzRteAXJ.js";import{t}from"./AppShell-gs_4nkS3.js";import{_ as n}from"./index-DEfXu0t2.js";import{t as r}from"./AuthGate-0_3Trkdl.js";var i=e(),a=()=>(0,i.jsx)(r,{children:(0,i.jsx)(t,{title:`FIGHTERS`,children:(0,i.jsx)(n,{})})});export{a as component};

@@ -34,7 +34,7 @@ function Welcome() {
         .eq("id", session.user.id)
         .maybeSingle();
       const hasPrefs = Array.isArray(data?.disciplines) && data!.disciplines.length > 0;
-      navigate({ to: hasPrefs ? "/feed" : "/onboarding", replace: true });
+      navigate({ to: hasPrefs ? "/peleadores" : "/onboarding", replace: true });
     })();
   }, [session, loading, navigate, splashDone]);
 
